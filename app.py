@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
 from streamlit_card import card
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 
@@ -90,6 +91,25 @@ st.write("Os usuários do Skoob podem avaliar suas leituras em notas de 0 a 5, s
 # histograma do rating
 # livros mais avaliados (rating maior que 4.5 até 5.0) (dataframe/tabela)
 # top 5 ou 10 menos avaliados (gráfico de linha ou dataframe/tabela)
+with st.expander("Distribuição das Notas"):
+    plt.figure(figsize=(10, 6))
+    plt.hist(df['rating'], bins=np.arange(0, 6, 0.5), edgecolor='black', alpha=0.7)
+    plt.title("Histograma das Notas ")
+    plt.xlabel("Notas")
+    plt.ylabel("Quantidade de Livros")
+    plt.xticks(np.arange(0, 6, 0.5))
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    st.pyplot(plt)
+
+with st.expander("Livros Mais Bem Avaliados (Rating > 4.5)"):
+    mais_avaliados = df[(df['rating'] > 4.5) & (df['rating'] <= 5.0)]
+    mais_avaliados = mais_avaliados[['titulo', 'rating', 'avaliacao']].sort_values(by='rating', ascending=False)
+    st.dataframe(mais_avaliados)
+
+with st.expander("Top 10 Livros Menos Bem Avaliados"):
+    menos_avaliados = df[df['avaliacao'] > 0].sort_values(by='rating', ascending=True).head(10)
+    st.dataframe(menos_avaliados[['titulo', 'rating', 'avaliacao']])
+
 
 st.divider()
 
