@@ -80,8 +80,25 @@ st.divider()
 st.header("Leituras")
 st.write("O skoob possui 4 status: abandonei, relendo, lendo, quero ler e lido.")
 # top 5 mais lidos (gráfico de barra ou gráfico de linha ou dataframe/tabela)
+
+with st.expander("Top 5 Livros mais lidos"):
+  mais_lidos = df[df['leram'] > 0].sort_values(by='leram', ascending=False).head(5)
+  st.dataframe(mais_lidos[['titulo', 'rating', 'avaliacao','leram']])
+
 # top 5 mais abandonados (gráfico de barra ou gráfico de linha ou dataframe/tabela) 
+with st.expander("Top 5 Livros mais abandonados"):
+    mais_abandonados = df[df['abandonos'] > 0].sort_values(by='abandonos', ascending=False).head(5)
+    st.dataframe(mais_abandonados[['titulo', 'rating', 'avaliacao','abandonos','ano','paginas']])
+
 # top 5 mais desejados (status quero ler) (gráfico de barra ou gráfico de linha ou dataframe/tabela)
+with st.expander("Top 5 Livros mais Desejados"):
+    mais_desejados = df[df['querem_ler'] > 0].sort_values(by='querem_ler', ascending=False).head(5)
+    plt.figure(figsize=(15, 10))
+    plt.bar(mais_desejados['titulo'], mais_desejados['querem_ler'], edgecolor='black', alpha=0.7)
+    plt.title("Top 5 Livros mais Desejados")
+    plt.xlabel("Título do Livro")
+    plt.ylabel("Quantidade de Pessoas Que Querem Ler")
+    st.pyplot(plt)
 
 st.divider()
 
