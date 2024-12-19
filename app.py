@@ -111,15 +111,81 @@ with st.expander("Top 10 Livros Menos Bem Avaliados"):
     st.dataframe(menos_avaliados[['titulo', 'rating', 'avaliacao']])
 
 
+# Edição dos Livros
 st.divider()
 
 st.header("Edição dos Livros")
 st.write("Mais informações sobre os livros do dataset.")
 
-# quantidade de livros por editora (gráfico de barra ou de linha)
-# quantidade de livros por ano (gráfico de barra ou de linha)
-# histograma da quantidade de páginas dos livros
+with st.expander("Top 10 Editoras com Mais Livros"):
+    # Quantidade de livros por editora
+    quant_livros_editora = df['editora'].value_counts()
+    plt.figure(figsize=(10, 6))
 
+    # Gráfico de Barras
+    ax = quant_livros_editora.head(10).plot(kind='bar', color='skyblue', edgecolor='black')
+    plt.title("Top 10 Editoras com Mais Livros")
+    plt.xlabel("Editora")
+    plt.ylabel("Quantidade de Livros")
+
+    # Alinhamento de títulos na barra
+    plt.xticks(rotation=0, ha='center', fontsize=10)
+
+    # Adicionando a grade
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Adicionando os valores nas barras
+    for i in ax.patches:
+        ax.text(i.get_x() + i.get_width() / 2, i.get_height() + 0.05,
+                str(int(i.get_height())), 
+                ha='center', va='bottom', fontweight='bold', fontsize=10)
+
+    # Exibe o gráfico
+    st.pyplot(plt)
+
+with st.expander("Quantidade de livros lançados por ano (últimos 10 anos)"):
+    # Filtra os dados para pegar apenas os últimos 10 anos
+    anos_mais_recentes = sorted(df['ano'].unique())[-10:]
+    df_ultimos_10_anos = df[df['ano'].isin(anos_mais_recentes)]
+    quant_livros_ano = df_ultimos_10_anos['ano'].value_counts().sort_index()
+
+    plt.figure(figsize=(10, 6))
+    ax = quant_livros_ano.plot(kind='bar', color='lightgreen', edgecolor='black')
+    plt.title("Quantidade de Livros Lançados nos Últimos 10 Anos")
+    plt.xlabel("Ano")
+    plt.ylabel("Quantidade de Livros")
+    plt.xticks(rotation=0, ha='center', fontsize=10)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    for i in ax.patches:
+        ax.text(i.get_x() + i.get_width() / 2, i.get_height() + 0.05,
+                str(int(i.get_height())),
+                ha='center', va='bottom', fontweight='bold', fontsize=10)
+
+    st.pyplot(plt)
+
+with st.expander("Top 10 Editoras Mais Lidas"):
+    livros_leram = df[df['leram'] > 0]
+    livros_abandonados = df[df['abandonos'] > 0]
+    top_10_editoras_lidos = livros_leram['editora'].value_counts().head(10)
+    
+    # Lista para armazenar as informações sobre editoras
+    editoras_info = []
+    for editora in top_10_editoras_lidos.index:
+        livros_editora_lidos = livros_leram[livros_leram['editora'] == editora]
+        livros_editora_abandonados = livros_abandonados[livros_abandonados['editora'] == editora]
+        livros_editora_lidos_count = livros_editora_lidos.groupby('titulo')['leram'].sum().sort_values(ascending=False)
+        # O livro mais lido
+        livro_mais_lido = livros_editora_lidos_count.idxmax()
+        livros_editora_abandonados_count = livros_editora_abandonados.groupby('titulo')['abandonos'].sum().sort_values(ascending=False)
+        # O livro mais abandonado
+        livro_mais_abandonado = livros_editora_abandonados_count.idxmax() if not livros_editora_abandonados_count.empty else 'Nenhum Abandonado'
+        #Colunas
+        editoras_info.append([editora, livro_mais_lido, livro_mais_abandonado])
+    #tabela
+    top_10_editoras_lidos_df = pd.DataFrame(editoras_info, columns=['Editora', 'Livro Mais Lido', 'Livro Mais Abandonado'])
+    top_10_editoras_lidos_df.index = top_10_editoras_lidos_df.index + 1
+    st.dataframe(top_10_editoras_lidos_df)
 st.divider()
 st.text("Unidade 01 - Sistemas de Apoio à Decisão")
 st.text("Grupo: AMANDA LIMA DA SILVA, BRENO GABRIEL DA SILVA SACERDOTE, DIEGO GOMES DE SANTANA, PAULINA KAYSE DE ANDRADE SANTOS.")
