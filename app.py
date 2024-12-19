@@ -94,10 +94,7 @@ with st.expander("Top 5 Livros mais abandonados"):
 with st.expander("Top 5 Livros mais Desejados"):
     mais_desejados = df[df['querem_ler'] > 0].sort_values(by='querem_ler', ascending=False).head(5)
     plt.figure(figsize=(15, 10))
-    plt.bar(mais_desejados['titulo'], mais_desejados['querem_ler'], edgecolor='black', alpha=0.7)
-    plt.title("Top 5 Livros mais Desejados")
-    plt.xlabel("Título do Livro")
-    plt.ylabel("Quantidade de Pessoas Que Querem Ler")
+    plt.pie(mais_desejados['querem_ler'], labels=mais_desejados['titulo'])
     st.pyplot(plt)
 
 st.divider()
