@@ -87,8 +87,8 @@ with st.expander("Top 5 Livros mais lidos"):
 
 # top 5 mais abandonados (gráfico de barra ou gráfico de linha ou dataframe/tabela) 
 with st.expander("Top 5 Livros mais abandonados"):
-    mais_abandonados = df[df['abandonos'] > 0].sort_values(by='abandonos', ascending=False).head(5)
-    st.dataframe(mais_abandonados[['titulo', 'rating', 'avaliacao','abandonos','ano','paginas']])
+    mais_abandonados = df[df['abandonos'] > 0].drop_duplicates(subset='titulo').sort_values(by='abandonos', ascending=False).head(5)
+    st.dataframe(mais_abandonados[['titulo', 'rating', 'avaliacao','abandonos']])
 
 # top 5 mais desejados (status quero ler) (gráfico de barra ou gráfico de linha ou dataframe/tabela)
 with st.expander("Top 5 Livros mais Desejados"):
